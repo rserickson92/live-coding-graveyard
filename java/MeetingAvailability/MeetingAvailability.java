@@ -8,13 +8,14 @@ public class MeetingAvailability {
     {1600, 1630}
   };
 
+  static int[][] NO_MEETINGS = new int[0][0]; 
+
   static boolean isAvailable(int[][] meetings, int availableStart, int availableEnd) {
     for (int[] meeting : meetings) {
       int meetingStart = meeting[0];
       int meetingEnd = meeting[1];
       for (int minute = availableStart; minute < availableEnd; minute++) {
 	if (minute >= meetingStart && minute < meetingEnd) {
-	  System.out.println(String.format("Failing minute=%d: meeting=[%d, %d]", minute, meetingStart, meetingEnd));
 	  return false;
 	}
       }
@@ -44,6 +45,13 @@ public class MeetingAvailability {
     runIsAvailable(MEETINGS, 1500, 1600, true);
     runIsAvailable(MEETINGS, 1359, 1600, false);
     runIsAvailable(MEETINGS, 1400, 1430, false);
+    runIsAvailable(MEETINGS, 1415, 1445, false);
+    runIsAvailable(MEETINGS, 1500, 1630, false);
+    runIsAvailable(MEETINGS, 1000, 1100, false);
+
+    System.out.println("Empty schedule, all should be true:");
+    runIsAvailable(NO_MEETINGS, 900, 500, true);
+    runIsAvailable(NO_MEETINGS, 0, 2359, true);
   }
 }
 
