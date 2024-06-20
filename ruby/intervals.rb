@@ -30,6 +30,7 @@ def off_times(ranges)
   off_ranges.to_s
 end
 
+puts 'P1 Outputs:'
 puts off_times([[5, ON], [11, OFF], [16, ON], [19, OFF], [23, ON], [36, OFF], [38, ON]])
 puts off_times([[5, OFF], [11, ON], [16, OFF], [19, ON], [23, OFF], [36, ON], [38, OFF]])
 
@@ -73,15 +74,17 @@ def union_off_ranges(off_ranges)
   end
 
   last_off_range = sorted_off_ranges.last
-  if prev_max_off_time && prev_max_off_time < last_off_range.first
-    output_ranges << last_off_range
-  elsif prev_max_off_time > last_off_range.last
+  if prev_max_off_time > last_off_range.last
     current_range << prev_max_off_time
-    output_ranges << current_range
+  else
+    current_range << last_off_range.last
   end
+  output_ranges << current_range
 
   output_ranges.to_s
 end
+
+puts 'P2 Outputs:'
 
 puts union_off_ranges([
   [[5, 11], [16, 19], [23, 36], [45, 49]],
@@ -93,4 +96,19 @@ puts union_off_ranges([
   [[5, 11], [16, 19], [23, 36], [45, 49]],
   [[4, 8], [15, 17], [42, 50], [55, 58]],
   [[5, 9], [37, 39], [54, 57]]
+])
+
+puts union_off_ranges([
+  [[1, 3]],
+  [[4, 8]],
+  [[9, 10]]
+])
+
+puts union_off_ranges([
+  [[1, 3]],
+  [[4, 8]],
+])
+
+puts union_off_ranges([
+  [[1, 60]]
 ])
