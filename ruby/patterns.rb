@@ -84,8 +84,50 @@ puts "=> #{match_pattern([1, 1, 1, 2], 'same diff diff same')}"
 # [[1, 2], [2], [1, 2]], "b b b" => true (pattern 3)
 # [[1, 2], [2], [1, 2]], "a b c" => false (matches no pattern)
 
-
 def match_metapattern(metapattern, candidate)
   items = candidate.split(' ')
   return false if metapattern.length != items.length
+
+  metapattern.first.any? do |pattern_int|
+    match_subpattern(pattern_int, items.first, metapattern[1..], items[1..], {})
+  end
 end
+
+def match_subpattern(cur_pattern_int, item, rest_of_mp, rest_of_items, matches)
+  return false if !matches[cur_pattern_int].nil? && matches[cur_pattern_int] != item
+  return true if rest_of_mp.empty?
+
+  matches[cur_pattern_int] = item
+  rest_of_mp.first.any? do |pattern_int|
+    match_subpattern(pattern_int, rest_of_items.first, rest_of_mp[1..], rest_of_items[1..], matches.dup)
+  end
+end
+
+puts '[[1, 2], [2], [1, 2]], "a b a" => true'
+puts "=> #{match_metapattern([[1, 2], [2], [1, 2]], "a b a")}"
+
+puts '[[1, 2], [2], [1, 2]], "a b b" => true'
+puts "=> #{match_metapattern([[1, 2], [2], [1, 2]], "a b b")}"
+
+puts '[[1, 2], [2], [1, 2]], "b b a" => true'
+puts "=> #{match_metapattern([[1, 2], [2], [1, 2]], "b b a")}"
+
+puts '[[1, 2], [2], [1, 2]], "b b b" => true'
+puts "=> #{match_metapattern([[1, 2], [2], [1, 2]], "b b b")}"
+
+puts '[[1, 2], [2], [1, 2]], "a b c" => false'
+puts "=> #{match_metapattern([[1, 2], [2], [1, 2]], "a b c")}"
+
+puts '[[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "d d b b a d" => true'
+puts "=> #{match_metapattern([[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "d d b b a d")}"
+
+puts '[[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "d d b b a c" => false'
+puts "=> #{match_metapattern([[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "d d b b a c")}"
+
+puts '[[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "e d c b a b" => false'
+puts "=> #{match_metapattern([[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "e d c b a b")}"
+
+puts '[[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "c d c b a d" => true'
+puts "=> #{match_metapattern([[3, 4], [4], [3, 2], [3, 2], [1], [1, 4]], "c d c b a d")}"
+
+# TODO if spare time: optimize runtime (e.g. memoization, "similar patterns")
